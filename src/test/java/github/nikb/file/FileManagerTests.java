@@ -132,4 +132,29 @@ public class FileManagerTests {
     }
 
 
+    @Test
+    public void test_writeMultiplePagesToSameFile() {
+        File dbDirectory = new File("same_file");
+        int blockSize = 2048;
+        FileManager fileManager = new FileManager(dbDirectory, blockSize);
+
+        BlockId blk1 = new BlockId("same_file", 0);
+        Page page1 = new Page(blockSize);
+        fileManager.write(blk1, page1);
+
+        BlockId blk2 = new BlockId("same_file", 1);
+        Page page2 = new Page(blockSize);
+        fileManager.write(blk2, page2);
+
+        // Add assertions to validate that both pages are written to the same file
+        // and that the contents of the pages are correct
+        Page page3 = new Page(blockSize);
+        fileManager.read(blk1, page3);
+        assertEquals(page1, page3);
+
+        Page page4 = new Page(blockSize);
+        fileManager.read(blk2, page4);
+        assertEquals(page2, page4);
+    }
+
 }
