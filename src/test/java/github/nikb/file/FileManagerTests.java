@@ -150,11 +150,10 @@ public class FileManagerTests {
         // and that the contents of the pages are correct
         Page page3 = new Page(blockSize);
         fileManager.read(blk1, page3);
-        assertEquals(page1, page3);
-
+        assertEquals(page1.contents(), page3.contents());
         Page page4 = new Page(blockSize);
         fileManager.read(blk2, page4);
-        assertEquals(page2, page4);
+        assertEquals(page2.contents(), page4.contents());
     }
 
 }
