@@ -93,9 +93,9 @@ public class FileManager {
 
     public synchronized void write(BlockId blk, Page page) {
         try {
-            RandomAccessFile f = getFile(Objects.requireNonNull(blk.fileName(), "File name is null"));
+            RandomAccessFile f = getFile(Objects.requireNonNull(blk, "File name is null").fileName());
             f.seek((long) blk.number() * blockSize);
-            f.getChannel().write(Objects.requireNonNull(page.contents(), "Page contents is null"));
+            f.getChannel().write(Objects.requireNonNull(page, "Page contents is null").contents());
         }
         catch (NullPointerException e) {
             throw new RuntimeException(e.getMessage());
