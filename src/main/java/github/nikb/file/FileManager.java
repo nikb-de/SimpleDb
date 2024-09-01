@@ -7,6 +7,7 @@ import java.io.RandomAccessFile;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class FileManager {
     /**
@@ -27,7 +28,7 @@ public class FileManager {
     /**
      * A map of open files.
      */
-    public Map<String, RandomAccessFile> openFiles = new HashMap<>();
+    public Map<String, RandomAccessFile> openFiles = new ConcurrentHashMap<>();
 
 
     /**
@@ -135,15 +136,16 @@ public class FileManager {
     }
 
     private RandomAccessFile getFile(String filename) throws IOException {
-        RandomAccessFile f = openFiles.get(filename);
-        if (f == null) {
-            File dbTable = new File(dbDirectory, filename);
-            f = new RandomAccessFile(dbTable, "rws");
-            openFiles.put(filename, f);
-        }
-        return f;
-
+	return openFiles.computeIfAbsent(filename, fn -> {
+            try {
+                File dbTable = new File(dbDirectory, fn); 
+                return new RandomAccessFile(dbTable, "rws");
+            } catch (IOException e) {
+                // TODO: to design a better way 
+                throw new RuntimeException(e);
+            }
+            
+	    });
     }
-
 
 }
